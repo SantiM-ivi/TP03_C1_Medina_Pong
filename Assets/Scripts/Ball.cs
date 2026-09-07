@@ -23,11 +23,13 @@ public class BallMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Wall"))
         {
             direction.y = -direction.y;
+            Debug.Log(collision.gameObject.name + " - " + collision.gameObject.tag);
         }
 
         if (collision.gameObject.CompareTag("Paddle"))
         {
             direction.x = -direction.x;
+            Debug.Log(collision.gameObject.name + " - " + collision.gameObject.tag);
         }
     }
 }

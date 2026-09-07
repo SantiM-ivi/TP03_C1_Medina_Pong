@@ -244,9 +244,10 @@ GameObject:
   - component: {fileID: 1399060457}
   - component: {fileID: 1399060456}
   - component: {fileID: 1399060455}
+  - component: {fileID: 1399060459}
   m_Layer: 0
   m_Name: Player1
-  m_TagString: Untagged
+  m_TagString: Paddle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -274,12 +275,8 @@ MonoBehaviour:
   moveSpeed: 5
   moveUpKey: 273
   moveDownKey: 274
-  moveLeftKey: 276
-  moveRightKey: 275
-  rotateLeftKey: 113
-  rotateRightKey: 101
-  rotationAmount: 10
-  randomColorKey: 114
+  minY: -4
+  maxY: 4
 --- !u!212 &1399060457
 SpriteRenderer:
   serializedVersion: 2
@@ -329,7 +326,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -2246650992860625620, guid: 33d16d3cf4968714cba5e40401922572, type: 3}
+  m_Sprite: {fileID: -2311659948842064771, guid: c3cce1133ff473b45a00b612c0eb253e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -355,9 +352,30 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2.31, y: -0.13}
+  m_AnchoredPosition: {x: 7.86, y: -0.06}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.28866667}
+--- !u!65 &1399060459
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1399060454}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.68, y: 7.39, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1433338003
 GameObject:
   m_ObjectHideFlags: 0
@@ -620,9 +638,10 @@ GameObject:
   - component: {fileID: 1542065172}
   - component: {fileID: 1542065171}
   - component: {fileID: 1542065170}
+  - component: {fileID: 1542065174}
   m_Layer: 0
   m_Name: Player2
-  m_TagString: Untagged
+  m_TagString: Paddle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -650,12 +669,8 @@ MonoBehaviour:
   moveSpeed: 5
   moveUpKey: 119
   moveDownKey: 115
-  moveLeftKey: 97
-  moveRightKey: 100
-  rotateLeftKey: 113
-  rotateRightKey: 101
-  rotationAmount: 10
-  randomColorKey: 114
+  minY: -4
+  maxY: 4
 --- !u!212 &1542065172
 SpriteRenderer:
   serializedVersion: 2
@@ -705,7 +720,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -8540793713715789035, guid: f4eb80f79c2f4e54791970d20fe2d60a, type: 3}
+  m_Sprite: {fileID: -2311659948842064771, guid: c3cce1133ff473b45a00b612c0eb253e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -731,9 +746,30 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -2.73, y: 0}
+  m_AnchoredPosition: {x: -6.95, y: -0.21}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!65 &1542065174
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1542065169}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.68, y: 7.39, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2035396788
 GameObject:
   m_ObjectHideFlags: 0
@@ -746,6 +782,7 @@ GameObject:
   - component: {fileID: 2035396791}
   - component: {fileID: 2035396790}
   - component: {fileID: 2035396789}
+  - component: {fileID: 2035396793}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Untagged
@@ -802,7 +839,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BallMovement
   speed: 6
-  startDirection: {x: 1, y: 1}
+  startDirection: {x: 1, y: 0}
 --- !u!212 &2035396791
 SpriteRenderer:
   serializedVersion: 2
@@ -877,6 +914,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &2035396793
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2035396788}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 1
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
