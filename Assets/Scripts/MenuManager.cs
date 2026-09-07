@@ -1,73 +1,36 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class MenuManager : MonoBehaviour
+public class MainMenuManager : MonoBehaviour
 {
-    [Header("Main Menu")]
+    [SerializeField] private string gameplaySceneName = "Gameplay";
+
     [SerializeField] private GameObject mainMenuPanel;
-
-    [Header("Pause Menu")]
-    [SerializeField] private GameObject pauseMenuPanel;
-
-    [Header("Shared Panels")]
-    [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject creditsPanel;
-
-    private GameObject lastMenuPanel;
-    private bool isPaused;
 
     private void Start()
     {
+        Time.timeScale = 1f;
+
         mainMenuPanel.SetActive(true);
-        pauseMenuPanel.SetActive(false);
-        settingsPanel.SetActive(false);
         creditsPanel.SetActive(false);
-
-        Time.timeScale = 0f;
-        isPaused = false;
-    }
-
-    private void Update()
-    {
-        if (mainMenuPanel.activeSelf) return;
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            TogglePause();
-        }
     }
 
     public void PlayGame()
     {
-        mainMenuPanel.SetActive(false);
-        Time.timeScale = 1f;
-    }
-
-    public void TogglePause()
-    {
-        isPaused = !isPaused;
-        pauseMenuPanel.SetActive(isPaused);
-        Time.timeScale = isPaused ? 0f : 1f;
-    }
-
-    public void OpenSettings()
-    {
-        lastMenuPanel = mainMenuPanel.activeSelf ? mainMenuPanel : pauseMenuPanel;
-        lastMenuPanel.SetActive(false);
-        settingsPanel.SetActive(true);
+        SceneManager.LoadScene(gameplaySceneName);
     }
 
     public void OpenCredits()
     {
-        lastMenuPanel = mainMenuPanel.activeSelf ? mainMenuPanel : pauseMenuPanel;
-        lastMenuPanel.SetActive(false);
+        mainMenuPanel.SetActive(false);
         creditsPanel.SetActive(true);
     }
 
-    public void BackToPreviousMenu()
+    public void BackToMainMenu()
     {
-        settingsPanel.SetActive(false);
         creditsPanel.SetActive(false);
-        lastMenuPanel.SetActive(true);
+        mainMenuPanel.SetActive(true);
     }
 
     public void ExitGame()

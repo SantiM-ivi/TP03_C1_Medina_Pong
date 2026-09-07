@@ -4,19 +4,15 @@ using TMPro;
 
 public class SettingsPanel : MonoBehaviour
 {
-    [Header("Player References")]
-    [SerializeField] private Movement player1Movement;
-    [SerializeField] private Movement player2Movement;
+    [SerializeField] private PaddleMovement player1Movement;
+    [SerializeField] private PaddleMovement player2Movement;
 
-    [Header("Player 1 UI")]
     [SerializeField] private Slider player1Slider;
     [SerializeField] private TMP_Text player1ValueText;
 
-    [Header("Player 2 UI")]
     [SerializeField] private Slider player2Slider;
     [SerializeField] private TMP_Text player2ValueText;
 
-    [Header("Slider Range")]
     [SerializeField] private float minSpeed = 1f;
     [SerializeField] private float maxSpeed = 15f;
 
