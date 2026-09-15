@@ -13,18 +13,18 @@ public class BallMovement : MonoBehaviour
 
     [Header("Speed Ramp")]
     [SerializeField] private float speedIncreasePerHit = 0.5f;
+    [SerializeField] private float speedIncreasePerWallBounce = 0.25f;
     [SerializeField] private float maxSpeed = 14f;
 
     [Header("Bounce")]
-    [Tooltip("Cuanto mas alto, mas inclinada sale la pelota al pegar en la punta de la paleta.")]
     [SerializeField] private float maxBounceAngle = 0.8f;
-
-    [Tooltip("Componente vertical minima tras chocar una pared, evita rebotes infinitos casi horizontales.")]
     [SerializeField] private float minVerticalComponent = 0.15f;
+    [SerializeField] private float directionJitterDegrees = 6f;
 
     private Rigidbody2D rb;
     private Vector3 startPosition;
     private float startSpeed;
+    private Vector2 velocityBeforeStep;
 
     private void Awake()
     {
@@ -47,7 +47,6 @@ public class BallMovement : MonoBehaviour
         SetVelocity(direction);
     }
 
-
     public void ResetBall(Vector2 direction)
     {
         transform.position = startPosition;
@@ -59,7 +58,6 @@ public class BallMovement : MonoBehaviour
         speed = startSpeed;
     }
 
-
     public void Stop()
     {
         rb.linearVelocity = Vector2.zero;
@@ -67,6 +65,8 @@ public class BallMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        velocityBeforeStep = rb.linearVelocity;
+
         if (rb.linearVelocity.sqrMagnitude > 0.01f)
         {
             rb.linearVelocity = rb.linearVelocity.normalized * speed;
@@ -85,36 +85,60 @@ public class BallMovement : MonoBehaviour
         }
     }
 
-
     private void BounceOffPaddle(Collision2D collision)
     {
         speed = Mathf.Min(speed + speedIncreasePerHit, maxSpeed);
 
-
-        float paddleHalfHeight = collision.collider.bounds.extents.y;
-        float verticalOffset = (transform.position.y - collision.transform.position.y) / paddleHalfHeight;
+        Bounds paddleBounds = collision.collider.bounds;
+        float paddleHalfHeight = paddleBounds.extents.y;
+        float verticalOffset = (transform.position.y - paddleBounds.center.y) / paddleHalfHeight;
         verticalOffset = Mathf.Clamp(verticalOffset, -1f, 1f);
 
+        float horizontalDirection = Mathf.Sign(transform.position.x - paddleBounds.center.x);
 
-        float horizontalDirection = Mathf.Sign(transform.position.x - collision.transform.position.x);
+        float verticalDirection = verticalOffset * maxBounceAngle;
+        verticalDirection = EnsureMinimumVertical(verticalDirection);
 
-        SetVelocity(new Vector2(horizontalDirection, verticalOffset * maxBounceAngle));
+        Vector2 direction = new Vector2(horizontalDirection, verticalDirection);
+        direction = ApplyRandomJitter(direction);
+
+        SetVelocity(direction);
     }
-
 
     private void BounceOffWall(Collision2D collision)
     {
         Vector2 normal = collision.GetContact(0).normal;
-        Vector2 reflected = Vector2.Reflect(rb.linearVelocity, normal).normalized;
+        Vector2 reflected = Vector2.Reflect(velocityBeforeStep, normal).normalized;
 
-        if (Mathf.Abs(reflected.y) < minVerticalComponent)
-        {
-            reflected.y = minVerticalComponent * Mathf.Sign(reflected.y == 0f ? 1f : reflected.y);
-        }
+        reflected.y = EnsureMinimumVertical(reflected.y);
+
+        speed = Mathf.Min(speed + speedIncreasePerWallBounce, maxSpeed);
+
+        reflected = ApplyRandomJitter(reflected);
 
         SetVelocity(reflected);
     }
 
+    private float EnsureMinimumVertical(float verticalComponent)
+    {
+        if (Mathf.Abs(verticalComponent) >= minVerticalComponent)
+        {
+            return verticalComponent;
+        }
+
+        float previousVertical = velocityBeforeStep.y;
+        float fallbackSign = previousVertical != 0f
+            ? Mathf.Sign(previousVertical)
+            : (Random.value < 0.5f ? 1f : -1f);
+
+        return minVerticalComponent * fallbackSign;
+    }
+
+    private Vector2 ApplyRandomJitter(Vector2 direction)
+    {
+        float angle = Random.Range(-directionJitterDegrees, directionJitterDegrees);
+        return Quaternion.Euler(0f, 0f, angle) * direction;
+    }
 
     private void SetVelocity(Vector2 direction)
     {
