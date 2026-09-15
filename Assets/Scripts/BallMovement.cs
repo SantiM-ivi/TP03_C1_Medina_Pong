@@ -41,15 +41,13 @@ public class BallMovement : MonoBehaviour
         Launch(startDirection);
     }
 
-  
     public void Launch(Vector2 direction)
     {
         ResetSpeed();
         SetVelocity(direction);
     }
 
-    
-  
+
     public void ResetBall(Vector2 direction)
     {
         transform.position = startPosition;
@@ -61,9 +59,14 @@ public class BallMovement : MonoBehaviour
         speed = startSpeed;
     }
 
+
+    public void Stop()
+    {
+        rb.linearVelocity = Vector2.zero;
+    }
+
     private void FixedUpdate()
     {
-        
         if (rb.linearVelocity.sqrMagnitude > 0.01f)
         {
             rb.linearVelocity = rb.linearVelocity.normalized * speed;
@@ -82,6 +85,7 @@ public class BallMovement : MonoBehaviour
         }
     }
 
+
     private void BounceOffPaddle(Collision2D collision)
     {
         speed = Mathf.Min(speed + speedIncreasePerHit, maxSpeed);
@@ -91,11 +95,12 @@ public class BallMovement : MonoBehaviour
         float verticalOffset = (transform.position.y - collision.transform.position.y) / paddleHalfHeight;
         verticalOffset = Mathf.Clamp(verticalOffset, -1f, 1f);
 
-    
+
         float horizontalDirection = Mathf.Sign(transform.position.x - collision.transform.position.x);
 
         SetVelocity(new Vector2(horizontalDirection, verticalOffset * maxBounceAngle));
     }
+
 
     private void BounceOffWall(Collision2D collision)
     {
@@ -109,6 +114,7 @@ public class BallMovement : MonoBehaviour
 
         SetVelocity(reflected);
     }
+
 
     private void SetVelocity(Vector2 direction)
     {
