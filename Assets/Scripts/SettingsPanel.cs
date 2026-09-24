@@ -11,7 +11,6 @@ public class SettingsPanel : MonoBehaviour
     [SerializeField] private TMP_Text player1SpeedValueText;
     [SerializeField] private Slider player1HeightSlider;
     [SerializeField] private TMP_Text player1HeightValueText;
-    [SerializeField] private Button[] player1ColorButtons;
 
     [Header("Player 2")]
     [SerializeField] private PaddleMovement player2Movement;
@@ -20,7 +19,13 @@ public class SettingsPanel : MonoBehaviour
     [SerializeField] private TMP_Text player2SpeedValueText;
     [SerializeField] private Slider player2HeightSlider;
     [SerializeField] private TMP_Text player2HeightValueText;
-    [SerializeField] private Button[] player2ColorButtons;
+
+    [Header("Color (aplica a ambos jugadores)")]
+    [Tooltip("Un solo slider que recorre la paleta y cambia el color de los dos paddles a la vez.")]
+    [SerializeField] private Slider colorSlider;
+    [SerializeField] private TMP_Text colorValueText;
+    [SerializeField] private Image colorPreviewP1;
+    [SerializeField] private Image colorPreviewP2;
 
     [Header("Ranges")]
     [SerializeField] private float minSpeed = 1f;
@@ -35,46 +40,36 @@ public class SettingsPanel : MonoBehaviour
         Color.white, Color.red, Color.cyan, Color.yellow, Color.green, Color.magenta
     };
 
-    // Evita que asignar minValue/maxValue en SetupSlider dispare onValueChanged
-    // (y por lo tanto los handlers OnXChanged) durante la inicializacion del panel.
+
     private bool isInitializing;
 
     private void OnEnable()
     {
         if (!ValidateReferences())
         {
-            // Si falta algo, no seguimos: mejor un panel a medio configurar
-            // con un error claro en la Console que uno silenciosamente roto
-            // (los sliders de Height quedarian con los valores crudos de
-            // Unity: min 0, max 1, y podrian dejar la paleta invisible).
+
             return;
         }
 
         isInitializing = true;
 
-        // Height primero: es el que mas rompe visualmente si algo falla,
-        // asi queda configurado antes que cualquier otra cosa pueda fallar.
+
         SetupSlider(player1HeightSlider, player1HeightValueText, minHeight, maxHeight, player1Appearance.Height, "F0");
         SetupSlider(player2HeightSlider, player2HeightValueText, minHeight, maxHeight, player2Appearance.Height, "F0");
 
-        // Altura en pasos enteros: 1, 2, 3. wholeNumbers hace que Unity redondee
-        // el valor del slider al entero mas cercano dentro del rango [minHeight, maxHeight].
+
         player1HeightSlider.wholeNumbers = true;
         player2HeightSlider.wholeNumbers = true;
 
         SetupSlider(player1SpeedSlider, player1SpeedValueText, minSpeed, maxSpeed, player1Movement.MoveSpeed);
         SetupSlider(player2SpeedSlider, player2SpeedValueText, minSpeed, maxSpeed, player2Movement.MoveSpeed);
 
-        SetupColorButtons(player1ColorButtons, player1Appearance);
-        SetupColorButtons(player2ColorButtons, player2Appearance);
+        SetupColorSlider();
 
         isInitializing = false;
     }
 
-    /// <summary>
-    /// Chequea que todas las referencias esten asignadas antes de tocar los
-    /// sliders. Si falta algo, loguea exactamente que campo es y corta.
-    /// </summary>
+
     private bool ValidateReferences()
     {
         bool isValid = true;
@@ -87,6 +82,8 @@ public class SettingsPanel : MonoBehaviour
         if (player2Appearance == null) { Debug.LogError("SettingsPanel: falta asignar Player 2 Appearance.", this); isValid = false; }
         if (player2SpeedSlider == null) { Debug.LogError("SettingsPanel: falta asignar Player 2 Speed Slider.", this); isValid = false; }
         if (player2HeightSlider == null) { Debug.LogError("SettingsPanel: falta asignar Player 2 Height Slider.", this); isValid = false; }
+        if (colorSlider == null) { Debug.LogError("SettingsPanel: falta asignar Color Slider.", this); isValid = false; }
+        if (paddleColors == null || paddleColors.Length == 0) { Debug.LogError("SettingsPanel: Paddle Colors esta vacio.", this); isValid = false; }
 
         return isValid;
     }
@@ -99,21 +96,49 @@ public class SettingsPanel : MonoBehaviour
         valueText.text = currentValue.ToString(format);
     }
 
-    private void SetupColorButtons(Button[] buttons, PaddleAppearance appearance)
+    private void SetupColorSlider()
     {
-        for (int i = 0; i < buttons.Length && i < paddleColors.Length; i++)
+        colorSlider.wholeNumbers = true;
+        colorSlider.minValue = 0;
+        colorSlider.maxValue = paddleColors.Length - 1;
+
+        // Índice actual basado en el color actual de Player 1 (si no matchea ninguno, arranca en 0).
+        int currentIndex = 0;
+        Color currentColor = player1Appearance.PaddleColor;
+        for (int i = 0; i < paddleColors.Length; i++)
         {
-            Color color = paddleColors[i];
-
-            Image swatch = buttons[i].GetComponent<Image>();
-            if (swatch != null)
+            if (paddleColors[i] == currentColor)
             {
-                swatch.color = color;
+                currentIndex = i;
+                break;
             }
-
-            buttons[i].onClick.RemoveAllListeners();
-            buttons[i].onClick.AddListener(() => appearance.PaddleColor = color);
         }
+
+        colorSlider.SetValueWithoutNotify(currentIndex);
+        ApplyColorIndex(currentIndex);
+    }
+
+    public void OnColorSliderChanged(float value)
+    {
+        if (isInitializing) return;
+
+        ApplyColorIndex(Mathf.RoundToInt(value));
+    }
+
+    private void ApplyColorIndex(int index)
+    {
+        index = Mathf.Clamp(index, 0, paddleColors.Length - 1);
+        Color color = paddleColors[index];
+
+        Debug.Log($"[SettingsPanel] Color slider -> índice {index} ({color}). Aplicando a Player 1 y Player 2.");
+
+        player1Appearance.PaddleColor = color;
+        player2Appearance.PaddleColor = color;
+
+        if (colorPreviewP1 != null) colorPreviewP1.color = color;
+        if (colorPreviewP2 != null) colorPreviewP2.color = color;
+
+        if (colorValueText != null) colorValueText.text = $"{index + 1}/{paddleColors.Length}";
     }
 
     public void OnPlayer1SpeedChanged(float value)

@@ -19,7 +19,11 @@ public class PaddleAppearance : MonoBehaviour
     public Color PaddleColor
     {
         get => spriteRenderer.color;
-        set => spriteRenderer.color = value;
+        set
+        {
+            Debug.Log($"[PaddleAppearance] Seteando color en '{gameObject.name}': {value}");
+            spriteRenderer.color = value;
+        }
     }
 
     private void Awake()
