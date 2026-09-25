@@ -3905,7 +3905,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -7217,11 +7217,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4efa2d9b78a7c0345bd26a80c2bd3542, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BallMovement
-  speed: 8
+  speed: 10
   startDirection: {x: 1, y: 0}
-  speedIncreasePerHit: 0.5
-  maxSpeed: 14
-  maxBounceAngle: 0.8
+  speedIncreasePerHit: 1
+  maxSpeed: 50
+  maxBounceAngle: 1
   minVerticalComponent: 0.15
 --- !u!212 &2035396791
 SpriteRenderer:

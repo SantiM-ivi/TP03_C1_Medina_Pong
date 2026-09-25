@@ -16,8 +16,6 @@ public class PaddleMovement : MonoBehaviour
     private Rigidbody2D rb;
     private float inputDirection;
 
-    // SettingsPanel.cs sigue usando esta propiedad para el slider de velocidad.
-    // Ahora controla el tope de velocidad, no la fuerza directamente.
     public float MoveSpeed
     {
         get => maxSpeed;
@@ -33,7 +31,7 @@ public class PaddleMovement : MonoBehaviour
 
     private void Update()
     {
-        // El input se lee en Update (más responsive) y se aplica en FixedUpdate (física).
+
         inputDirection = 0f;
         if (Input.GetKey(moveUpKey)) inputDirection += 1f;
         if (Input.GetKey(moveDownKey)) inputDirection -= 1f;

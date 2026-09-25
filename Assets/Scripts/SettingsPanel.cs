@@ -102,7 +102,7 @@ public class SettingsPanel : MonoBehaviour
         colorSlider.minValue = 0;
         colorSlider.maxValue = paddleColors.Length - 1;
 
-        // Índice actual basado en el color actual de Player 1 (si no matchea ninguno, arranca en 0).
+        
         int currentIndex = 0;
         Color currentColor = player1Appearance.PaddleColor;
         for (int i = 0; i < paddleColors.Length; i++)

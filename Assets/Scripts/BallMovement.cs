@@ -25,12 +25,16 @@ public class BallMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Vector3 startPosition;
     private float startSpeed;
+    private Vector2 lastDirection;
+    private bool isStopped;
+    private Vector2 velocityBeforeStep;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
         rb.freezeRotation = true;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
         startSpeed = speed;
         startPosition = transform.position;
@@ -62,19 +66,30 @@ public class BallMovement : MonoBehaviour
 
     public void Stop()
     {
+        isStopped = true;
         rb.linearVelocity = Vector2.zero;
     }
 
     private void FixedUpdate()
     {
+        if (isStopped) return;
+
+        velocityBeforeStep = rb.linearVelocity;
+
         if (rb.linearVelocity.sqrMagnitude > 0.01f)
         {
             rb.linearVelocity = rb.linearVelocity.normalized * speed;
+        }
+        else
+        {
+            rb.linearVelocity = lastDirection * speed;
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log($"[BallMovement] Colision con '{collision.gameObject.name}' tag='{collision.gameObject.tag}'");
+
         if (collision.gameObject.CompareTag(PaddleTag))
         {
             BounceOffPaddle(collision);
@@ -98,14 +113,18 @@ public class BallMovement : MonoBehaviour
 
         float horizontalDirection = Mathf.Sign(transform.position.x - collision.transform.position.x);
 
-        SetVelocity(new Vector2(horizontalDirection, verticalOffset * maxBounceAngle));
+        Vector2 bounceDir = new Vector2(horizontalDirection, verticalOffset * maxBounceAngle);
+
+        SetVelocity(bounceDir);
     }
 
 
     private void BounceOffWall(Collision2D collision)
     {
+        speed = Mathf.Min(speed + speedIncreasePerHit, maxSpeed);
+
         Vector2 normal = collision.GetContact(0).normal;
-        Vector2 reflected = Vector2.Reflect(rb.linearVelocity, normal).normalized;
+        Vector2 reflected = Vector2.Reflect(velocityBeforeStep, normal).normalized;
 
         if (Mathf.Abs(reflected.y) < minVerticalComponent)
         {
@@ -118,7 +137,16 @@ public class BallMovement : MonoBehaviour
 
     private void SetVelocity(Vector2 direction)
     {
+        direction = direction.normalized;
+        if (direction.sqrMagnitude < 0.0001f)
+        {
+            direction = lastDirection.sqrMagnitude > 0.0001f ? lastDirection : Vector2.right;
+        }
+
+        lastDirection = direction;
+        isStopped = false;
+
         rb.linearVelocity = Vector2.zero;
-        rb.AddForce(direction.normalized * speed * rb.mass, ForceMode2D.Impulse);
+        rb.AddForce(direction * speed * rb.mass, ForceMode2D.Impulse);
     }
 }

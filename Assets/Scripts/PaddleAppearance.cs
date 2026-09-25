@@ -37,9 +37,7 @@ public class PaddleAppearance : MonoBehaviour
     {
         height = newHeight;
 
-        // Solo se escala el eje Y: el ancho de la paleta no debe cambiar.
-        // El BoxCollider2D escala solo junto con el transform, no hace
-        // falta tocar su tamaño a mano.
+
         Vector3 scale = transform.localScale;
         scale.y = baseScale.y * newHeight;
         transform.localScale = scale;
