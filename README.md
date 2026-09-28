@@ -1,10 +1,10 @@
-https://zdra.itch.io/plong
+
 
 # Pong 2D (Unity)
 
 Juego de Pong para 2 jugadores locales hecho en Unity (2D, físicas con `Rigidbody2D`). Las paletas se mueven en toda su mitad de la cancha, la partida se juega al mejor de 5 y hay un límite de tiempo para convertir cada gol.
 
-> **Jugalo en Itch.io:** _(pegá acá el link)_
+> **Jugalo en Itch.io:**https://zdra.itch.io/plong
 
 ## Características
 
