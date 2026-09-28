@@ -114,7 +114,6 @@ public class SettingsPanel : MonoBehaviour
             }
         }
 
-        // Solo refleja el estado actual: no aplica color, porque el color de los paddles ahora cambia durante la partida.
         colorSlider.SetValueWithoutNotify(currentIndex);
         UpdateColorLabels(currentIndex);
     }

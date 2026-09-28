@@ -25,7 +25,6 @@ public class PaddleAppearance : MonoBehaviour
         set => ApplyHeight(value);
     }
 
-    // Color "propio" del paddle. Mientras toca un limite se muestra negro, pero este valor se conserva.
     public Color PaddleColor
     {
         get => baseColor;
@@ -59,7 +58,8 @@ public class PaddleAppearance : MonoBehaviour
 
     private void RefreshColor()
     {
-        spriteRenderer.color = isTouchingLimit ? settings.LimitColor : baseColor;
+        Color limitColor = settings != null ? settings.LimitColor : Color.black;
+        spriteRenderer.color = isTouchingLimit ? limitColor : baseColor;
     }
 
     private void ApplyHeight(float newHeight)

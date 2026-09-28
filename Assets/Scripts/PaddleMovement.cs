@@ -5,6 +5,7 @@ using UnityEngine;
 public class PaddleMovement : MonoBehaviour
 {
     private const float LimitTolerance = 0.01f;
+    private const string WallTag = "Wall";
 
     [Header("Settings")]
     [SerializeField] private PaddleSettings settings;
@@ -27,6 +28,8 @@ public class PaddleMovement : MonoBehaviour
     private PaddleAppearance appearance;
     private Vector2 inputDirection;
     private float maxSpeed;
+    private int wallContacts;
+    private bool isAtCourtLimit;
 
     public float MoveSpeed
     {
@@ -40,7 +43,8 @@ public class PaddleMovement : MonoBehaviour
         appearance = GetComponent<PaddleAppearance>();
 
         rb.gravityScale = 0f;
-        rb.freezeRotation = true;
+       
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         maxSpeed = settings.MaxSpeed;
     }
@@ -81,10 +85,33 @@ public class PaddleMovement : MonoBehaviour
         rb.position = position;
         rb.linearVelocity = velocity;
 
-        appearance.SetTouchingLimit(IsTouchingScreenLimit(position));
+        isAtCourtLimit = IsTouchingScreenLimit(position);
+        RefreshLimitColor();
     }
 
-    // Limites de pantalla: arriba, abajo y el borde del arco propio. El medio de la cancha no cuenta.
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (!collision.gameObject.CompareTag(WallTag)) return;
+
+        wallContacts++;
+        RefreshLimitColor();
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (!collision.gameObject.CompareTag(WallTag)) return;
+
+        wallContacts = Mathf.Max(0, wallContacts - 1);
+        RefreshLimitColor();
+    }
+
+   
+    private void RefreshLimitColor()
+    {
+        appearance.SetTouchingLimit(wallContacts > 0 || isAtCourtLimit);
+    }
+
+    
     private bool IsTouchingScreenLimit(Vector2 position)
     {
         bool touchesVertical = position.y >= maxY - LimitTolerance || position.y <= minY + LimitTolerance;
