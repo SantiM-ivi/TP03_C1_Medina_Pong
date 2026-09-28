@@ -114,8 +114,9 @@ public class SettingsPanel : MonoBehaviour
             }
         }
 
+        // Solo refleja el estado actual: no aplica color, porque el color de los paddles ahora cambia durante la partida.
         colorSlider.SetValueWithoutNotify(currentIndex);
-        ApplyColorIndex(currentIndex);
+        UpdateColorLabels(currentIndex);
     }
 
     public void OnColorSliderChanged(float value)
@@ -130,10 +131,16 @@ public class SettingsPanel : MonoBehaviour
         index = Mathf.Clamp(index, 0, paddleColors.Length - 1);
         Color color = paddleColors[index];
 
-        Debug.Log($"[SettingsPanel] Color slider -> índice {index} ({color}). Aplicando a Player 1 y Player 2.");
-
         player1Appearance.PaddleColor = color;
         player2Appearance.PaddleColor = color;
+
+        UpdateColorLabels(index);
+    }
+
+    private void UpdateColorLabels(int index)
+    {
+        index = Mathf.Clamp(index, 0, paddleColors.Length - 1);
+        Color color = paddleColors[index];
 
         if (colorPreviewP1 != null) colorPreviewP1.color = color;
         if (colorPreviewP2 != null) colorPreviewP2.color = color;

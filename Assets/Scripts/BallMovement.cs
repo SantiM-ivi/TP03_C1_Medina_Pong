@@ -7,24 +7,13 @@ public class BallMovement : MonoBehaviour
     private const string PaddleTag = "Paddle";
     private const string WallTag = "Wall";
 
-    [Header("Movement Settings")]
-    [SerializeField] private float speed = 6f;
+    [Header("Settings")]
+    [SerializeField] private BallSettings settings;
     [SerializeField] private Vector2 startDirection = new Vector2(1f, 1f);
-
-    [Header("Speed Ramp")]
-    [SerializeField] private float speedIncreasePerHit = 0.5f;
-    [SerializeField] private float maxSpeed = 14f;
-
-    [Header("Bounce")]
-    [Tooltip("Cuanto mas alto, mas inclinada sale la pelota al pegar en la punta de la paleta.")]
-    [SerializeField] private float maxBounceAngle = 0.8f;
-
-    [Tooltip("Componente vertical minima tras chocar una pared, evita rebotes infinitos casi horizontales.")]
-    [SerializeField] private float minVerticalComponent = 0.15f;
 
     private Rigidbody2D rb;
     private Vector3 startPosition;
-    private float startSpeed;
+    private float speed;
     private Vector2 lastDirection;
     private bool isStopped;
     private Vector2 velocityBeforeStep;
@@ -36,7 +25,7 @@ public class BallMovement : MonoBehaviour
         rb.freezeRotation = true;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
-        startSpeed = speed;
+        speed = settings.StartSpeed;
         startPosition = transform.position;
     }
 
@@ -60,7 +49,7 @@ public class BallMovement : MonoBehaviour
 
     public void ResetSpeed()
     {
-        speed = startSpeed;
+        speed = settings.StartSpeed;
     }
 
 
@@ -88,8 +77,6 @@ public class BallMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log($"[BallMovement] Colision con '{collision.gameObject.name}' tag='{collision.gameObject.tag}'");
-
         if (collision.gameObject.CompareTag(PaddleTag))
         {
             BounceOffPaddle(collision);
@@ -103,7 +90,7 @@ public class BallMovement : MonoBehaviour
 
     private void BounceOffPaddle(Collision2D collision)
     {
-        speed = Mathf.Min(speed + speedIncreasePerHit, maxSpeed);
+        speed = Mathf.Min(speed + settings.SpeedIncreasePerHit, settings.MaxSpeed);
 
 
         float paddleHalfHeight = collision.collider.bounds.extents.y;
@@ -113,22 +100,27 @@ public class BallMovement : MonoBehaviour
 
         float horizontalDirection = Mathf.Sign(transform.position.x - collision.transform.position.x);
 
-        Vector2 bounceDir = new Vector2(horizontalDirection, verticalOffset * maxBounceAngle);
+        Vector2 bounceDir = new Vector2(horizontalDirection, verticalOffset * settings.MaxBounceAngle);
 
         SetVelocity(bounceDir);
+
+        if (collision.gameObject.TryGetComponent(out PaddleAppearance paddleAppearance))
+        {
+            paddleAppearance.SetRandomColor();
+        }
     }
 
 
     private void BounceOffWall(Collision2D collision)
     {
-        speed = Mathf.Min(speed + speedIncreasePerHit, maxSpeed);
+        speed = Mathf.Min(speed + settings.SpeedIncreasePerHit, settings.MaxSpeed);
 
         Vector2 normal = collision.GetContact(0).normal;
         Vector2 reflected = Vector2.Reflect(velocityBeforeStep, normal).normalized;
 
-        if (Mathf.Abs(reflected.y) < minVerticalComponent)
+        if (Mathf.Abs(reflected.y) < settings.MinVerticalComponent)
         {
-            reflected.y = minVerticalComponent * Mathf.Sign(reflected.y == 0f ? 1f : reflected.y);
+            reflected.y = settings.MinVerticalComponent * Mathf.Sign(reflected.y == 0f ? 1f : reflected.y);
         }
 
         SetVelocity(reflected);
